@@ -2,6 +2,7 @@
 
 import { redirect } from 'next/navigation'
 import { prisma } from '@/components/Prisma'
+import { Prisma } from '@prisma/client'
 import bcrypt from 'bcrypt'
 import { cookies } from 'next/headers'
 import jwt, { JwtPayload } from 'jsonwebtoken'
@@ -167,7 +168,7 @@ export const dbUpdateProjectInfo = async (project_id: number, client: string, de
 
   export const dbUpdateKoefs = async (koefs: any[]) => {
 	try {
-		await prisma.$transaction(async (tx) => {
+		await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
 			const updatePromises = koefs.map(koef => {
 				return tx.koef.update({
 					where: { id: koef.id },
