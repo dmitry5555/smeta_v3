@@ -161,32 +161,32 @@ const Order = memo(({proj_id, user_id}: any) => {
 				}
 				
 				// кровля стропилы + контробрешетки + обрешетки   -  в антисеп
-				// if ((fixed_id === '5_1') && ['4_11'].includes(pos.fixed_id) ) {
-				// 	const pos2 = positions.find((pos: any) => pos.fixed_id === '5_2')
-				// 	const pos3 = positions.find((pos: any) => pos.fixed_id === '5_3')
-				// 	const pos4 = positions.find((pos: any) => pos.fixed_id === '5_4')
-				// 	return { ...pos, value: value + pos2.value + pos3.value + pos4.value }
-				// }
-				// if ((fixed_id === '5_2') && ['4_11'].includes(pos.fixed_id) ) {
-				// 	// сумма двух позиций
-				// 	const pos2 = positions.find((pos: any) => pos.fixed_id === '5_1')
-				// 	const pos3 = positions.find((pos: any) => pos.fixed_id === '5_3')
-				// 	const pos4 = positions.find((pos: any) => pos.fixed_id === '5_4')
-				// 	return { ...pos, value: value + pos2.value + pos3.value + pos4.value }
-				// }
+				if ((fixed_id === '5_1') && ['4_11'].includes(pos.fixed_id) ) {
+					const pos2 = positions.find((pos: any) => pos.fixed_id === '5_2')
+					const pos3 = positions.find((pos: any) => pos.fixed_id === '5_3')
+					const pos4 = positions.find((pos: any) => pos.fixed_id === '5_4')
+					return { ...pos, value: value + pos2.value + pos3.value + pos4.value }
+				}
+				if ((fixed_id === '5_2') && ['4_11'].includes(pos.fixed_id) ) {
+					// сумма двух позиций
+					const pos2 = positions.find((pos: any) => pos.fixed_id === '5_1')
+					const pos3 = positions.find((pos: any) => pos.fixed_id === '5_3')
+					const pos4 = positions.find((pos: any) => pos.fixed_id === '5_4')
+					return { ...pos, value: value + pos2.value + pos3.value + pos4.value }
+				}
 				if ((fixed_id === '5_3') && ['4_11'].includes(pos.fixed_id) ) {
 					// сумма двух позиций
-					// const pos2 = positions.find((pos: any) => pos.fixed_id === '5_1')
-					// const pos3 = positions.find((pos: any) => pos.fixed_id === '5_2')
+					const pos2 = positions.find((pos: any) => pos.fixed_id === '5_1')
+					const pos3 = positions.find((pos: any) => pos.fixed_id === '5_2')
 					const pos4 = positions.find((pos: any) => pos.fixed_id === '5_4')
-					return { ...pos, value: value + pos4.value }
+					return { ...pos, value: value + pos2.value + pos3.value + pos4.value }
 				}
 				if ((fixed_id === '5_4') && ['4_11'].includes(pos.fixed_id) ) {
 					// сумма двух позиций
-					// const pos2 = positions.find((pos: any) => pos.fixed_id === '5_1')
-					// const pos3 = positions.find((pos: any) => pos.fixed_id === '5_2')
+					const pos2 = positions.find((pos: any) => pos.fixed_id === '5_1')
+					const pos3 = positions.find((pos: any) => pos.fixed_id === '5_2')
 					const pos4 = positions.find((pos: any) => pos.fixed_id === '5_3')
-					return { ...pos, value: value + pos4.value }
+					return { ...pos, value: value + pos2.value + pos3.value + pos4.value }
 				}
 
 				// фасад Подшив свесов кровли , копия в шлифовку
@@ -314,7 +314,7 @@ const Order = memo(({proj_id, user_id}: any) => {
 					// return { ...pos, valueNoKoef: (value ), value: Math.round(value * pos.finalKoef * 100) / 100 }
 				}
 				// ЧЕРДАЧНОЕ
-				// утепление  - 100  
+				// утепление  - 100
 				if ((fixed_id === '20_3') && ['21_3'].includes(pos.fixed_id) ) {
 					const balancer = docKoefs.find((koef: any) => koef.koef_code == 'k21_3_cherd_utep100' && koef.is_balancer)
 					return { ...pos, valueNoKoef: (value), value: Math.round( Math.ceil(value * pos.finalKoef / balancer.value ) * balancer.value * 1000) / 1000 }	
@@ -532,8 +532,9 @@ const Order = memo(({proj_id, user_id}: any) => {
 				const korobka_itogo_rab_bez_f = sum2_1 + sum4_1 + korob_itogo_mat_sn
 				const korobka_itogo_rab_s_f = sum2_1 + sum4_1 + korob_itogo_mat_sn + sum1_7
 
-				const korob_korob_nalog_bf =  korobka_itogo_rab + korob_itogo_mat_sn - korobka_itogo_mat_bn - rashReal1
-				const korob_nalog =  Math.round(korob_korob_nalog_bf * 0.15)
+				// const korob_korob_nalog_bf =  korobka_itogo_rab + korob_itogo_mat_sn - korobka_itogo_mat_bn - rashReal1
+				const korob_korob_nalog_bf =  korobka_itogo_rab_bez_f - korobka_itogo_mat_bn - korob_raboty_rab - rashReal1
+				const korob_nalog =  Math.round(korob_korob_nalog_bf * 0.09)
 				const korob_nalog_sf = (korob_nalog) + (sum1_9)
 
 				const korob_zp_magager_sf = Math.round(korobka_itogo_rab_s_f * 0.01)
@@ -541,8 +542,8 @@ const Order = memo(({proj_id, user_id}: any) => {
 				const korob_zp_magager_bf = Math.round(korobka_itogo_rab_bez_f * 0.01)
 				const korob_zp_tehno_bf = Math.round(korobka_itogo_rab_bez_f * 0.01)
 
-				const prib_bez_fund = Math.round(korobka_itogo_rab_bez_f - korobka_itogo_mat_bn - korob_raboty_rab - rashReal1 - korob_nalog  )
-				const prib_s_fund = Math.round(korobka_itogo_rab_s_f - korobka_itogo_mat_bn - korob_raboty_rab - rashReal1 - korob_nalog_sf - sum1_1 - sum1_2 - sum1_3  )
+				const prib_bez_fund = Math.round(korobka_itogo_rab_bez_f - korobka_itogo_mat_bn - korob_raboty_rab - rashReal1 - korob_nalog - korob_zp_magager_bf - korob_zp_tehno_bf )
+				const prib_s_fund = Math.round(korobka_itogo_rab_s_f - korobka_itogo_mat_bn - korob_raboty_rab - rashReal1 - korob_nalog_sf - sum1_1 - sum1_2 - sum1_3 - korob_zp_magager_sf - korob_zp_tehno_sf )
 
 
 				// ФАСАД
@@ -577,7 +578,7 @@ const Order = memo(({proj_id, user_id}: any) => {
 				const sum29_1 = sumAll(positions.filter((pos: any) => pos.code == 29)) // 29 Инженерные коммуникации закуп
 				// ИНЖ КОММ ЦЕНЫ наши
 				const sum30_1 = sumAll(positions.filter((pos: any) => pos.code == 30)) // 30 Инженерные коммуникации наши
-
+				const prib_kommunik = sum30_1 - sum29_1
 				// НАКЛАДНЫЕ
 				const sum24_1 = sumAll(positions.filter((pos: any) => pos.code == 24)) // 24 Доставка материалов
 				const sum25_1 = sumAll(positions.filter((pos: any) => pos.code == 25)) // 25 Проживание, питание
@@ -602,13 +603,13 @@ const Order = memo(({proj_id, user_id}: any) => {
 				// const itogo_mat_v_tk_bn = sum23_1 + sum21_1 + sum19_1 + sum17_1 + sum15_1 + sum13_1 + sum11_1 + sum9_1 + sum7_1
 
 				// upd - добавлены инж комм цены sum30_1
-				const itogo_mat_sn = Math.round((itogo_mat_v_tk_bn * koef2) + sum30_1)
+				const itogo_mat_sn = Math.round((itogo_mat_v_tk_bn * koef2))
 				const mat_bez_chekov = nakladnie_itogo
 				const raboty_rabotnikov =  Math.round(itogo_rab_v_tk * 0.6)
-				const prib_s_mat = itogo_mat_sn - itogo_mat_v_tk_bn
+				const prib_s_mat = itogo_mat_sn - itogo_mat_v_tk_bn + prib_kommunik
 				const prib_s_rab = itogo_rab_v_tk - raboty_rabotnikov
 
-				const itogo_rab_i_mat_po_dog_vtk = itogo_rab_v_tk + itogo_mat_sn + mat_bez_chekov
+				const itogo_rab_i_mat_po_dog_vtk = itogo_rab_v_tk + itogo_mat_sn + sum30_1 + nakladnie_itogo
 				// mat_bez_chekov NO
 				const itogo_rab_po_dog_vtk_pod_krish_bez_fund =  itogo_rab_i_mat_po_dog_vtk + korobka_itogo_rab_bez_f
 				// const itogo_rab_po_dog_vtk_pod_krish_bez_fund =  itogo_rab_i_mat_po_dog_vtk + korobka_itogo_rab_bez_f + mat_bez_chekov
@@ -620,23 +621,29 @@ const Order = memo(({proj_id, user_id}: any) => {
 				const zp_v_tk_manager_podkr_sf = Math.round(korobka_itogo_rab_s_f * 0.01)
 				const zp_v_tk_technodzor_podkr_sf = Math.round(korobka_itogo_rab_s_f * 0.01)
 
-				const zp_v_tk_manager_bf = Math.round(itogo_rab_po_dog_vtk_pod_krish_bez_fund * 0.01)
-				const zp_v_tk_tehnodzor_bf = Math.round(itogo_rab_po_dog_vtk_pod_krish_bez_fund * 0.01)
+				const zp_v_tk_manager_bf = Math.round((itogo_rab_po_dog_vtk_pod_krish_bez_fund - sum25_1 - sum24_1) * 0.01)
+				const zp_v_tk_tehnodzor_bf = Math.round((itogo_rab_po_dog_vtk_pod_krish_bez_fund - sum25_1 - sum24_1) * 0.01)
+
 				const zp_v_tk_manager_sf = Math.round(itogo_rab_po_dog_vtk_pod_krish_s_fund * 0.01)
 				const zp_v_tk_tehnodzor_sf = Math.round(itogo_rab_po_dog_vtk_pod_krish_s_fund * 0.01)
 
+				const zp_v_tk_manager_last = Math.round(itogo_rab_i_mat_po_dog_vtk * 0.01)
+				const zp_v_tk_tehnodzor_last = Math.round(itogo_rab_i_mat_po_dog_vtk * 0.01)
+
 				// rashod_real
-				const summa_nalogoobl = itogo_rab_i_mat_po_dog_vtk - itogo_mat_v_tk_bn - rashReal2
+				// const summa_nalogoobl = itogo_rab_i_mat_po_dog_vtk - itogo_mat_v_tk_bn - rashReal2
+				const summa_nalogoobl = itogo_rab_i_mat_po_dog_vtk - itogo_mat_v_tk_bn - rashReal2 - sum29_1 - raboty_rabotnikov
 				// const nalog = Math.round(summa_nalogoobl * 0.075)
-				const nalog = Math.round(summa_nalogoobl * 0.15)
-				// const pribil_v_tk = itogo_rab_i_mat_po_dog_vtk - nalog - rashReal2 - itogo_mat_v_tk_bn - raboty_rabotnikov - mat_bez_chekov - zp_v_tk_manager - zp_v_tk_tehnodzor
-				const pribil_v_tk = itogo_rab_i_mat_po_dog_vtk - itogo_mat_v_tk_bn - nalog - rashReal2 - raboty_rabotnikov - mat_bez_chekov
+				const nalog = Math.round(summa_nalogoobl * 0.09)
+				const pribil_v_tk = itogo_rab_i_mat_po_dog_vtk - nalog - rashReal2 - itogo_mat_v_tk_bn - raboty_rabotnikov - mat_bez_chekov - zp_v_tk_manager_last - zp_v_tk_tehnodzor_last - sum29_1
+				
+				// const pribil_v_tk = itogo_rab_i_mat_po_dog_vtk - nalog - rashReal2 - itogo_mat_v_tk_bn - raboty_rabotnikov - mat_bez_chekov - zp_v_tk_manager_bf - zp_v_tk_tehnodzor_bf - sum29_1
 				// const pribil_v_tk_pk_bf = Math.round(pribil_v_tk + prib_bez_fund - zp_v_tk_manager - zp_v_tk_tehnodzor)
 				const pribil_v_tk_pk_bf = Math.round(pribil_v_tk + prib_bez_fund)
 				// const pribil_v_tk_pk_sf = Math.round(pribil_v_tk + prib_s_fund - zp_v_tk_manager - zp_v_tk_tehnodzor)
 				const pribil_v_tk_pk_sf = Math.round(pribil_v_tk + prib_s_fund)
 				// const sebest_v_tk_sf = Math.round(sum1_5 + korobka_itogo_rab + korob_raboty_rab + rashReal1 + korob_nalog_sf + itogo_mat_v_tk_bn + mat_bez_chekov + raboty_rabotnikov + rashReal2 + nalog + zp_v_tk_manager_sf + zp_v_tk_tehnodzor_sf)
-				const sebest_v_tk_sf_new = Math.round(sum1_5 + korobka_itogo_mat_bn + korob_raboty_rab + rashReal1 + korob_nalog + itogo_mat_v_tk_bn + mat_bez_chekov + raboty_rabotnikov + rashReal2 + nalog)
+				const sebest_v_tk_sf_new = Math.round(sum1_5 + korobka_itogo_mat_bn + korob_raboty_rab + rashReal1 + korob_nalog_sf    + itogo_mat_v_tk_bn + raboty_rabotnikov + rashReal2 + nalog + mat_bez_chekov + zp_v_tk_manager_sf + zp_v_tk_tehnodzor_sf + sum29_1 )
 				// const itogo_rabot_minus_sebest = Math.round(itogo_rab_po_dog_vtk_pod_krish_s_fund - sebest_v_tk_sf)
 				const itogo_rabot_minus_sebest = Math.round(itogo_rab_po_dog_vtk_pod_krish_s_fund - sebest_v_tk_sf_new)
 
@@ -647,7 +654,7 @@ const Order = memo(({proj_id, user_id}: any) => {
 					sum6_1, sum7_1, sum8_1, sum9_1, sum10_1, sum11_1, sum12_1, sum13_1, sum14_1, sum15_1, sum16_1, sum17_1, sum18_1, sum19_1, sum20_1, sum21_1, sum22_1, sum23_1, sum24_1, sum25_1, sum26_1, sum27_1, sum28_1,
 					itogo_rab_v_tk, itogo_mat_v_tk_bn, itogo_mat_sn, mat_bez_chekov, raboty_rabotnikov, prib_s_mat, prib_s_rab, itogo_rab_i_mat_po_dog_vtk, itogo_rab_po_dog_vtk_pod_krish_bez_fund, itogo_rab_po_dog_vtk_pod_krish_s_fund,
 					pribil_v_tk, nalog,  zp_v_tk_manager_podkr_bf, zp_v_tk_technodzor_podkr_bf, zp_v_tk_manager_podkr_sf, zp_v_tk_technodzor_podkr_sf, summa_nalogoobl, pribil_v_tk_pk_bf, pribil_v_tk_pk_sf, sebest_v_tk_sf_new, itogo_rabot_minus_sebest, zp_v_tk_manager_bf, zp_v_tk_tehnodzor_bf,
-					zp_v_tk_manager_sf, zp_v_tk_tehnodzor_sf, rashReal1, rashReal2, koef1, koef2, sum29_1, sum30_1
+					zp_v_tk_manager_sf, zp_v_tk_tehnodzor_sf, rashReal1, rashReal2, koef1, koef2, sum29_1, sum30_1, prib_kommunik, zp_v_tk_tehnodzor_last, zp_v_tk_manager_last
 					
 				 }); 
 				 
@@ -1016,7 +1023,6 @@ const Order = memo(({proj_id, user_id}: any) => {
 						<div className='w-9/12 my-auto text-right font-bold'>Итого материалов и работ:</div>
 						<div className='w-3/12 my-auto' id=''>{Intl.NumberFormat('ru-RU').format(sums.sum4_1 + Math.round(sums.sum5_1 * sums.koef1))}</div>
 					</div>
-					<div className='flex flex-row w-full h-0.5 bg-slate-300' ></div>
 					{user_id == 1 && <div className='bg-slate-100'>
 					<div className='flex flex-row w-full px-5 py-4 border border-t-0 text-sm gap-6 ' >
 						<div className='w-9/12 my-auto text-right font-bold'>Материалы кровли без наценки :</div>
@@ -1028,7 +1034,8 @@ const Order = memo(({proj_id, user_id}: any) => {
 						<div className='w-3/12 my-auto' id=''></div>
 					</div> */}
 					
-					
+					<div className='flex flex-row w-full h-0.5 bg-slate-300' ></div>
+
 					<div className='flex flex-row w-full px-5 py-4 border border-t-0 text-sm gap-6' >
 						<div className='w-9/12 my-auto text-right font-bold'>Итого работ:</div>
 						<div className='w-3/12 my-auto' id=''>{Intl.NumberFormat('ru-RU').format(sums.korobka_itogo_rab)}</div>
@@ -1130,26 +1137,26 @@ const Order = memo(({proj_id, user_id}: any) => {
 					</div>
 					</div>}
 
-					{/* <div className='flex flex-row w-full px-5 py-4 border border-t-0 text-sm gap-6' >
+					<div className='flex flex-row w-full px-5 py-4 border border-t-0 text-sm gap-6' >
 						<div className='w-9/12 my-auto text-right font-bold'>Зараплата менеджера с учетом фундамента:</div>
 						<div className='w-3/12 my-auto' id=''>{Intl.NumberFormat('ru-RU').format(sums.korob_zp_magager_sf)}</div>
-					</div> */}
-					{/* {user_id == 1 && <>
+					</div>
+					{user_id == 1 && <>
 					<div className='flex flex-row w-full px-5 py-4 border border-t-0 text-sm gap-6 bg-slate-100' >
 						<div className='w-9/12 my-auto text-right font-bold'>Зарплата технодзора с учетом фундамента:</div>
 						<div className='w-3/12 my-auto' id=''>{Intl.NumberFormat('ru-RU').format(sums.korob_zp_tehno_sf)}</div>
 					</div>
-					</>} */}
-					{/* <div className='flex flex-row w-full px-5 py-4 border border-t-0 text-sm gap-6' >
+					</>}
+					<div className='flex flex-row w-full px-5 py-4 border border-t-0 text-sm gap-6' >
 						<div className='w-9/12 my-auto text-right font-bold'>Зараплата менеджера без учета фундамента:</div>
 						<div className='w-3/12 my-auto' id=''>{Intl.NumberFormat('ru-RU').format(sums.korob_zp_magager_bf)}</div>
-					</div> */}
-					{/* {user_id == 1 && <>
+					</div>
+					{user_id == 1 && <>
 					<div className='flex flex-row w-full px-5 py-4 border border-t-0 text-sm gap-6 bg-slate-100' >
 						<div className='w-9/12 my-auto text-right font-bold'>Зарплата технодзора без учета фундамента :</div>
 						<div className='w-3/12 my-auto' id=''>{Intl.NumberFormat('ru-RU').format(sums.korob_zp_tehno_bf)}</div>
 					</div>
-					</>} */}
+					</>}
 				</>	
 				}
 				
@@ -2139,7 +2146,11 @@ const Order = memo(({proj_id, user_id}: any) => {
 						<div className='w-9/12 my-auto text-right font-bold'>Итого инженерные коммуникации - цены наши:</div>
 						<div className='w-3/12 my-auto' id=''>{Intl.NumberFormat('ru-RU').format(sums.sum30_1)}</div>
 					</div>
-				</>	
+					<div className='flex flex-row w-full px-5 py-4 border border-t-0 text-sm gap-6 bg-lime-100' >
+						<div className='w-9/12 my-auto text-right font-bold'>Прибыль с комуникаций:</div>
+						<div className='w-3/12 my-auto' id=''>{Intl.NumberFormat('ru-RU').format(sums.prib_kommunik)}</div>
+					</div>
+				</>
 				}
 
 
@@ -2374,7 +2385,7 @@ const Order = memo(({proj_id, user_id}: any) => {
 						<div className='w-3/12 my-auto' id=''>{Intl.NumberFormat('ru-RU').format(sums.pribil_v_tk_pk_sf)}</div>
 					</div>
 					<div className='flex flex-row w-full px-5 py-4 border border-t-0 text-sm gap-6' >
-					<div className='w-9/12 my-auto text-right font-bold'>Себестоимость:</div>
+					<div className='w-9/12 my-auto text-right font-bold'>Себестоимость в теплый контур с фундаментом :</div>
 					{/* <div className='w-9/12 my-auto text-right font-bold'>Себестоимость в теплый контур с фундаментом:</div> */}
 					<div className='w-3/12 my-auto' id=''>{Intl.NumberFormat('ru-RU').format(sums.sebest_v_tk_sf_new)}</div>
 					</div>
@@ -2385,22 +2396,22 @@ const Order = memo(({proj_id, user_id}: any) => {
 					</div>}
 
 					<div className='flex flex-row w-full px-5 py-4 border border-t-0 text-sm gap-6' >
-						<div className='w-9/12 my-auto text-right font-bold'>Зарплата менеджера под крышу без фундамента:</div>
-						<div className='w-3/12 my-auto' id=''>{Intl.NumberFormat('ru-RU').format(sums.zp_v_tk_manager_podkr_bf)}</div>
+						<div className='w-9/12 my-auto text-right font-bold'>Зарплата в теплый контур менеджер:</div>
+						<div className='w-3/12 my-auto' id=''>{Intl.NumberFormat('ru-RU').format(sums.zp_v_tk_manager_last)}</div>
 					</div>
 					{user_id == 1 && <div className='flex flex-row w-full px-5 py-4 border border-t-0 text-sm gap-6 bg-slate-100' >
-						<div className='w-9/12 my-auto text-right font-bold'>Зарплата технодзора под крышу без фундамента:</div>
-						<div className='w-3/12 my-auto' id=''>{Intl.NumberFormat('ru-RU').format(sums.zp_v_tk_technodzor_podkr_bf)}</div>
+						<div className='w-9/12 my-auto text-right font-bold'>Зарплата технодзора в теплый контур:</div>
+						<div className='w-3/12 my-auto' id=''>{Intl.NumberFormat('ru-RU').format(sums.zp_v_tk_tehnodzor_last)}</div>
 					</div>}
 
-					<div className='flex flex-row w-full px-5 py-4 border border-t-0 text-sm gap-6' >
+					{/* <div className='flex flex-row w-full px-5 py-4 border border-t-0 text-sm gap-6' >
 						<div className='w-9/12 my-auto text-right font-bold'>Зарплата менеджера под крышу с фундаментом:</div>
 						<div className='w-3/12 my-auto' id=''>{Intl.NumberFormat('ru-RU').format(sums.zp_v_tk_manager_podkr_sf)}</div>
 					</div>
 					{user_id == 1 && <div className='flex flex-row w-full px-5 py-4 border border-t-0 text-sm gap-6 bg-slate-100' >
 						<div className='w-9/12 my-auto text-right font-bold'>Зарплата технодзора под крышу с фундаментом:</div>
 						<div className='w-3/12 my-auto' id=''>{Intl.NumberFormat('ru-RU').format(sums.zp_v_tk_technodzor_podkr_sf)}</div>
-					</div>}
+					</div>} */}
 
 
 					<div className='flex flex-row w-full px-5 py-4 border border-t-0 text-sm gap-6' >

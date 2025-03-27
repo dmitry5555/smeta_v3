@@ -127,8 +127,9 @@ const OrderKp = memo(({proj_id, user_id}: any) => {
 				const korobka_itogo_rab_bez_f = sum2_1 + sum4_1 + korob_itogo_mat_sn
 				const korobka_itogo_rab_s_f = sum2_1 + sum4_1 + korob_itogo_mat_sn + sum1_7
 
-				const korob_korob_nalog_bf =  korobka_itogo_rab + korob_itogo_mat_sn - korobka_itogo_mat_bn - rashReal1
-				const korob_nalog =  Math.round(korob_korob_nalog_bf * 0.15)
+				// const korob_korob_nalog_bf =  korobka_itogo_rab + korob_itogo_mat_sn - korobka_itogo_mat_bn - rashReal1
+				const korob_korob_nalog_bf =  korobka_itogo_rab_bez_f - korobka_itogo_mat_bn - korob_raboty_rab - rashReal1
+				const korob_nalog =  Math.round(korob_korob_nalog_bf * 0.09)
 				const korob_nalog_sf = (korob_nalog) + (sum1_9)
 
 				const korob_zp_magager_sf = Math.round(korobka_itogo_rab_s_f * 0.01)
@@ -168,9 +169,11 @@ const OrderKp = memo(({proj_id, user_id}: any) => {
 				/* 311 */ const sum22_1 = sumAll(positions.filter((pos: any) => pos.code == 22)) // 22 Межкомнатные перегородки - работы
 				/* 324 */ const sum23_1 = sumAll(positions.filter((pos: any) => pos.code == 23)) // 23 Межкомнатные перегородки - Материалы
 				
-				// ИНЖ КОММ
-				const sum29_1 = sumAll(positions.filter((pos: any) => pos.code == 29)) // 29 Инженерные коммуникации
-
+				// ИНЖ КОММ цены закупа
+				const sum29_1 = sumAll(positions.filter((pos: any) => pos.code == 29)) // 29 Инженерные коммуникации закуп
+				// ИНЖ КОММ ЦЕНЫ наши
+				const sum30_1 = sumAll(positions.filter((pos: any) => pos.code == 30)) // 30 Инженерные коммуникации наши
+				const prib_kommunik = sum30_1 - sum29_1
 				// НАКЛАДНЫЕ
 				const sum24_1 = sumAll(positions.filter((pos: any) => pos.code == 24)) // 24 Доставка материалов
 				const sum25_1 = sumAll(positions.filter((pos: any) => pos.code == 25)) // 25 Проживание, питание
@@ -186,38 +189,53 @@ const OrderKp = memo(({proj_id, user_id}: any) => {
 				// ЧАСТЬ 2 ИТОГО
 
 				// 27_1 работы антресоль
-				const itogo_rab_v_tk = sum27_1 + sum22_1 + sum20_1 + sum18_1 + sum16_1 + sum14_1 + sum12_1 + sum10_1 + sum8_1 + sum6_1
+				const itogo_rab_v_tk =  sum27_1 + sum22_1 + sum20_1 + sum18_1 + sum16_1 + sum14_1 + sum12_1 + sum10_1 + sum8_1 + sum6_1
 				// const itogo_rab_v_tk =  sum22_1 + sum20_1 + sum18_1 + sum16_1 + sum14_1 + sum12_1 + sum10_1 + sum8_1 + sum6_1
 
 				// 29_1 инженерные коммуникации 28_1 материалы антресоль
-				const itogo_mat_v_tk_bn = sum29_1 + sum28_1 + sum23_1 + sum21_1 + sum19_1 + sum17_1 + sum15_1 + sum13_1 + sum11_1 + sum9_1 + sum7_1
+				// upd - убраны инж.комм sum29_1
+				const itogo_mat_v_tk_bn = sum28_1 + sum23_1 + sum21_1 + sum19_1 + sum17_1 + sum15_1 + sum13_1 + sum11_1 + sum9_1 + sum7_1
 				// const itogo_mat_v_tk_bn = sum23_1 + sum21_1 + sum19_1 + sum17_1 + sum15_1 + sum13_1 + sum11_1 + sum9_1 + sum7_1
-				const itogo_mat_sn = Math.round(itogo_mat_v_tk_bn * koef2)
+
+				// upd - добавлены инж комм цены sum30_1
+				const itogo_mat_sn = Math.round((itogo_mat_v_tk_bn * koef2))
 				const mat_bez_chekov = nakladnie_itogo
 				const raboty_rabotnikov =  Math.round(itogo_rab_v_tk * 0.6)
-				const prib_s_mat = itogo_mat_sn - itogo_mat_v_tk_bn
+				const prib_s_mat = itogo_mat_sn - itogo_mat_v_tk_bn + prib_kommunik
 				const prib_s_rab = itogo_rab_v_tk - raboty_rabotnikov
 
 				const itogo_rab_i_mat_po_dog_vtk = itogo_rab_v_tk + itogo_mat_sn + mat_bez_chekov
-				const itogo_rab_po_dog_vtk_pod_krish_bez_fund =  itogo_rab_i_mat_po_dog_vtk + korobka_itogo_rab_bez_f +  mat_bez_chekov
+				// mat_bez_chekov NO
+				const itogo_rab_po_dog_vtk_pod_krish_bez_fund =  itogo_rab_i_mat_po_dog_vtk + korobka_itogo_rab_bez_f
+				// const itogo_rab_po_dog_vtk_pod_krish_bez_fund =  itogo_rab_i_mat_po_dog_vtk + korobka_itogo_rab_bez_f + mat_bez_chekov
 				const itogo_rab_po_dog_vtk_pod_krish_s_fund = itogo_rab_po_dog_vtk_pod_krish_bez_fund + sum1_7
 				
 				// const itogo_minus_sebest = itogo_rab_po_dog_vtk_pod_krish_s_fund - 
-					const zp_v_tk_manager = Math.round(itogo_rab_i_mat_po_dog_vtk * 0.01)
-					const zp_v_tk_tehnodzor = Math.round(itogo_rab_i_mat_po_dog_vtk * 0.01)
-					const zp_v_tk_manager_bf = Math.round(itogo_rab_po_dog_vtk_pod_krish_bez_fund * 0.01)
-					const zp_v_tk_tehnodzor_bf = Math.round(itogo_rab_po_dog_vtk_pod_krish_bez_fund * 0.01)
-					const zp_v_tk_manager_sf = Math.round(itogo_rab_po_dog_vtk_pod_krish_s_fund * 0.01)
-					const zp_v_tk_tehnodzor_sf = Math.round(itogo_rab_po_dog_vtk_pod_krish_s_fund * 0.01)
+				const zp_v_tk_manager_podkr_bf = Math.round(korobka_itogo_rab_bez_f * 0.01)
+				const zp_v_tk_technodzor_podkr_bf = Math.round(korobka_itogo_rab_bez_f * 0.01)
+				const zp_v_tk_manager_podkr_sf = Math.round(korobka_itogo_rab_s_f * 0.01)
+				const zp_v_tk_technodzor_podkr_sf = Math.round(korobka_itogo_rab_s_f * 0.01)
+
+				const zp_v_tk_manager_bf = Math.round(itogo_rab_po_dog_vtk_pod_krish_bez_fund * 0.01)
+				const zp_v_tk_tehnodzor_bf = Math.round(itogo_rab_po_dog_vtk_pod_krish_bez_fund * 0.01)
+				const zp_v_tk_manager_sf = Math.round(itogo_rab_po_dog_vtk_pod_krish_s_fund * 0.01)
+				const zp_v_tk_tehnodzor_sf = Math.round(itogo_rab_po_dog_vtk_pod_krish_s_fund * 0.01)
 
 				// rashod_real
-				const summa_nalogoobl = itogo_rab_i_mat_po_dog_vtk - itogo_mat_v_tk_bn - rashReal2
-				const nalog = Math.round(summa_nalogoobl * 0.075)
-				const pribil_v_tk = itogo_rab_i_mat_po_dog_vtk - nalog - rashReal2 - itogo_mat_v_tk_bn - raboty_rabotnikov - mat_bez_chekov - zp_v_tk_manager - zp_v_tk_tehnodzor
-				const pribil_v_tk_pk_bf = Math.round(pribil_v_tk + prib_bez_fund - zp_v_tk_manager - zp_v_tk_tehnodzor)
-				const pribil_v_tk_pk_sf = Math.round(pribil_v_tk + prib_s_fund - zp_v_tk_manager - zp_v_tk_tehnodzor)
-				const sebest_v_tk_sf = Math.round(sum1_5 + korobka_itogo_rab + korob_raboty_rab + rashReal1 + korob_nalog_sf + itogo_mat_v_tk_bn + mat_bez_chekov + raboty_rabotnikov + rashReal2 + nalog + zp_v_tk_manager_sf + zp_v_tk_tehnodzor_sf)
-				const itogo_rabot_minus_sebest = Math.round(itogo_rab_po_dog_vtk_pod_krish_s_fund - sebest_v_tk_sf)
+				// const summa_nalogoobl = itogo_rab_i_mat_po_dog_vtk - itogo_mat_v_tk_bn - rashReal2
+				const summa_nalogoobl = itogo_rab_i_mat_po_dog_vtk - itogo_mat_v_tk_bn - rashReal2 - sum29_1 - raboty_rabotnikov
+				// const nalog = Math.round(summa_nalogoobl * 0.075)
+				const nalog = Math.round(summa_nalogoobl * 0.09)
+				// const pribil_v_tk = itogo_rab_i_mat_po_dog_vtk - nalog - rashReal2 - itogo_mat_v_tk_bn - raboty_rabotnikov - mat_bez_chekov - zp_v_tk_manager - zp_v_tk_tehnodzor
+				const pribil_v_tk = itogo_rab_i_mat_po_dog_vtk - itogo_mat_v_tk_bn - nalog - rashReal2 - raboty_rabotnikov - mat_bez_chekov - zp_v_tk_manager_bf - zp_v_tk_tehnodzor_bf - sum29_1
+				// const pribil_v_tk_pk_bf = Math.round(pribil_v_tk + prib_bez_fund - zp_v_tk_manager - zp_v_tk_tehnodzor)
+				const pribil_v_tk_pk_bf = Math.round(pribil_v_tk + prib_bez_fund)
+				// const pribil_v_tk_pk_sf = Math.round(pribil_v_tk + prib_s_fund - zp_v_tk_manager - zp_v_tk_tehnodzor)
+				const pribil_v_tk_pk_sf = Math.round(pribil_v_tk + prib_s_fund)
+				// const sebest_v_tk_sf = Math.round(sum1_5 + korobka_itogo_rab + korob_raboty_rab + rashReal1 + korob_nalog_sf + itogo_mat_v_tk_bn + mat_bez_chekov + raboty_rabotnikov + rashReal2 + nalog + zp_v_tk_manager_sf + zp_v_tk_tehnodzor_sf)
+				const sebest_v_tk_sf_new = Math.round(sum1_5 + korobka_itogo_mat_bn + korob_raboty_rab + rashReal1 + korob_nalog + itogo_mat_v_tk_bn + mat_bez_chekov + raboty_rabotnikov + rashReal2 + nalog + zp_v_tk_manager_sf + zp_v_tk_tehnodzor_sf + sum29_1 )
+				// const itogo_rabot_minus_sebest = Math.round(itogo_rab_po_dog_vtk_pod_krish_s_fund - sebest_v_tk_sf)
+				const itogo_rabot_minus_sebest = Math.round(itogo_rab_po_dog_vtk_pod_krish_s_fund - sebest_v_tk_sf_new)
 
 				setSums({ sum1_1, sum1_2, sum1_3, sum1_4, sum1_5, sum1_6, sum1_7, sum1_8, sum1_9, sum1_10, sum2_1, sum3_1, sum4_1, sum5_1, sum5_2, 
 					korobka_itogo_rab, korobka_itogo_mat_bn, korob_itogo_mat_sn, korob_raboty_rab, korob_prib_s_mat, korob_prib_s_rab, korobka_itogo_rab_bez_f, korobka_itogo_rab_s_f,
@@ -225,8 +243,8 @@ const OrderKp = memo(({proj_id, user_id}: any) => {
 					fasad_itogo, okna_itogo, perekr_itogo, mkperekr_itogo, nakladnie_itogo,
 					sum6_1, sum7_1, sum8_1, sum9_1, sum10_1, sum11_1, sum12_1, sum13_1, sum14_1, sum15_1, sum16_1, sum17_1, sum18_1, sum19_1, sum20_1, sum21_1, sum22_1, sum23_1, sum24_1, sum25_1, sum26_1, sum27_1, sum28_1,
 					itogo_rab_v_tk, itogo_mat_v_tk_bn, itogo_mat_sn, mat_bez_chekov, raboty_rabotnikov, prib_s_mat, prib_s_rab, itogo_rab_i_mat_po_dog_vtk, itogo_rab_po_dog_vtk_pod_krish_bez_fund, itogo_rab_po_dog_vtk_pod_krish_s_fund,
-					pribil_v_tk, nalog,  zp_v_tk_manager, zp_v_tk_tehnodzor, summa_nalogoobl, pribil_v_tk_pk_bf, pribil_v_tk_pk_sf, sebest_v_tk_sf, itogo_rabot_minus_sebest, zp_v_tk_manager_bf, zp_v_tk_tehnodzor_bf,
-					zp_v_tk_manager_sf, zp_v_tk_tehnodzor_sf, rashReal1, rashReal2, koef1, koef2, sum29_1
+					pribil_v_tk, nalog,  zp_v_tk_manager_podkr_bf, zp_v_tk_technodzor_podkr_bf, zp_v_tk_manager_podkr_sf, zp_v_tk_technodzor_podkr_sf, summa_nalogoobl, pribil_v_tk_pk_bf, pribil_v_tk_pk_sf, sebest_v_tk_sf_new, itogo_rabot_minus_sebest, zp_v_tk_manager_bf, zp_v_tk_tehnodzor_bf,
+					zp_v_tk_manager_sf, zp_v_tk_tehnodzor_sf, rashReal1, rashReal2, koef1, koef2, sum29_1, sum30_1, prib_kommunik
 					
 				 }); 
 				 
@@ -235,6 +253,7 @@ const OrderKp = memo(({proj_id, user_id}: any) => {
 				updateSums();
 				
 			}
+
 		}, [positions, docKoefs]);
 		
 
