@@ -185,6 +185,22 @@ export const dbUpdateProjectInfo = async (project_id: number, client: string, de
 	}
   };
 
+  export const dbDeletePosition = async (posId: number) => {
+	try {
+		await prisma.$transaction(async (tx) => {
+			await tx.field.delete({
+				where: { 
+					id: posId,
+				}
+			});
+		});
+		return true;
+	} catch (error) {
+		return false;
+	}
+  }
+	  
+
   export const dbUpdatePositions = async (docId: number, fields: any[]) => {
 	try{
 		await prisma.$transaction(async (tx) => {
@@ -225,12 +241,13 @@ export const dbUpdateProjectInfo = async (project_id: number, client: string, de
 						// Добавьте другие обновляемые поля здесь
 					}
 					});
-				} else if (!field.secured) {
-					// Удаляем запись, если это позиция не secured
-					return tx.field.delete({
-					where: { id: field.id }
-					});
-				}
+				} 
+				// else if (!field.secured) {
+				// 	// Удаляем запись, если это позиция не secured
+				// 	return tx.field.delete({
+				// 	where: { id: field.id }
+				// 	});
+				// }
 				}
 			});
 		

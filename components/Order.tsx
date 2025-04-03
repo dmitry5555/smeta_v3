@@ -4,11 +4,15 @@
 import Link from 'next/link'
 import { dbGetKoefs, dbGetProject, dbUpdateKoefs, dbUpdatePositions, dbUpdateProjectInfo } from '@/actions/Db'
 import { Cog6ToothIcon } from '@heroicons/react/24/outline'
-import { useCallback, useEffect, useState, memo } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import Position from './Position'
 import Koef from './Koef'
+import ModalDeletePosition from './ModalDeletePosition'
 
-const Order = memo(({proj_id, user_id}: any) => { 
+const Order = ({proj_id, user_id}: any) => { 
+	const [isDeletePositionModalOpen, setIsDeletePositionModalOpen] = useState(false)
+	const [selectedPosition, setSelectedPosition] = useState<any | null>(null)
+
 	const [visibleKoefs, setVisibleKoefs] = useState<{ [key: string]: boolean }>({});
 	const [formChanged, setFormChanged] = useState(Number)
 	const [isProjectInfoOpen, setProjectInfoOpen] = useState(true)
@@ -17,6 +21,10 @@ const Order = memo(({proj_id, user_id}: any) => {
 	const [docKoefs, setDocKoefs] = useState<any | null>(null)
 	const [sums, setSums] = useState<any | null>(null)
 	
+	const handleDeleteClick = (positionId: any) => {
+		setSelectedPosition(positionId)
+		isDeletePositionModalOpen ? setIsDeletePositionModalOpen(false) : setIsDeletePositionModalOpen(true)
+	}
 	const toggleKoefsVisibility = useCallback((positionId: string) => {
 		setVisibleKoefs((prevState) => ({
 		  ...prevState,
@@ -694,8 +702,9 @@ const Order = memo(({proj_id, user_id}: any) => {
 
 	return (
 		<>
+			{isDeletePositionModalOpen && selectedPosition && <ModalDeletePosition projectId={proj_id} positionId={selectedPosition} onClose={() => setIsDeletePositionModalOpen(false)} />}
+			
 			<div className='bg-white flex flex-col max-w-screen-2xl mx-auto w-full mb-6'>
-
 				<div className='bg-white sticky top-0 z-100'>
 					<div className='flex flex-row px-5 py-4  mt-5 border border-b-0 bg-white rounded-t-xl '>
 						<div className=''>
@@ -783,9 +792,10 @@ const Order = memo(({proj_id, user_id}: any) => {
 						docKoefs={docKoefs}
 						position={position}
 						handlePosChange={handlePosChange}
-						uniqueId={`${position.code}_${index + 1}`} 
+						uniqueId={`${position.code}_${index + 1}`}
 						toggleKoefsVisibility={toggleKoefsVisibility}
 						isKoefsVisible={visibleKoefs[position.id] || false}
+						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
 					<Koef 
@@ -866,6 +876,7 @@ const Order = memo(({proj_id, user_id}: any) => {
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
 						isKoefsVisible={visibleKoefs[position.id] || false}
+						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
 					<Koef 
@@ -907,6 +918,7 @@ const Order = memo(({proj_id, user_id}: any) => {
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
 						isKoefsVisible={visibleKoefs[position.id] || false}
+						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
 					<Koef 
@@ -955,6 +967,7 @@ const Order = memo(({proj_id, user_id}: any) => {
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
 						isKoefsVisible={visibleKoefs[position.id] || false}
+						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
 					<Koef 
@@ -994,6 +1007,7 @@ const Order = memo(({proj_id, user_id}: any) => {
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
 						isKoefsVisible={visibleKoefs[position.id] || false}
+						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
 					<Koef 
@@ -1182,6 +1196,7 @@ const Order = memo(({proj_id, user_id}: any) => {
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
 						isKoefsVisible={visibleKoefs[position.id] || false}
+						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any) => (
 					<Koef 
@@ -1222,6 +1237,7 @@ const Order = memo(({proj_id, user_id}: any) => {
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
 						isKoefsVisible={visibleKoefs[position.id] || false}
+						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
 					<Koef 
@@ -1272,6 +1288,7 @@ const Order = memo(({proj_id, user_id}: any) => {
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
 						isKoefsVisible={visibleKoefs[position.id] || false}
+						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
 					<Koef 
@@ -1312,6 +1329,7 @@ const Order = memo(({proj_id, user_id}: any) => {
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
 						isKoefsVisible={visibleKoefs[position.id] || false}
+						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
 					<Koef 
@@ -1361,6 +1379,7 @@ const Order = memo(({proj_id, user_id}: any) => {
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
 						isKoefsVisible={visibleKoefs[position.id] || false}
+						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
 					<Koef 
@@ -1399,6 +1418,7 @@ const Order = memo(({proj_id, user_id}: any) => {
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
 						isKoefsVisible={visibleKoefs[position.id] || false}
+						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
 					<Koef 
@@ -1458,6 +1478,7 @@ const Order = memo(({proj_id, user_id}: any) => {
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
 						isKoefsVisible={visibleKoefs[position.id] || false}
+						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
 					<Koef 
@@ -1496,6 +1517,7 @@ const Order = memo(({proj_id, user_id}: any) => {
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
 						isKoefsVisible={visibleKoefs[position.id] || false}
+						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
 					<Koef 
@@ -1544,6 +1566,7 @@ const Order = memo(({proj_id, user_id}: any) => {
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
 						isKoefsVisible={visibleKoefs[position.id] || false}
+						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
 					<Koef 
@@ -1583,6 +1606,7 @@ const Order = memo(({proj_id, user_id}: any) => {
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
 						isKoefsVisible={visibleKoefs[position.id] || false}
+						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
 					<Koef 
@@ -1640,6 +1664,7 @@ const Order = memo(({proj_id, user_id}: any) => {
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
 						isKoefsVisible={visibleKoefs[position.id] || false}
+						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
 					<Koef 
@@ -1679,6 +1704,7 @@ const Order = memo(({proj_id, user_id}: any) => {
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
 						isKoefsVisible={visibleKoefs[position.id] || false}
+						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
 					<Koef 
@@ -1728,6 +1754,7 @@ const Order = memo(({proj_id, user_id}: any) => {
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
 						isKoefsVisible={visibleKoefs[position.id] || false}
+						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
 					<Koef 
@@ -1767,6 +1794,7 @@ const Order = memo(({proj_id, user_id}: any) => {
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
 						isKoefsVisible={visibleKoefs[position.id] || false}
+						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
 					<Koef 
@@ -1816,6 +1844,7 @@ const Order = memo(({proj_id, user_id}: any) => {
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
 						isKoefsVisible={visibleKoefs[position.id] || false}
+						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
 					<Koef 
@@ -1855,6 +1884,7 @@ const Order = memo(({proj_id, user_id}: any) => {
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
 						isKoefsVisible={visibleKoefs[position.id] || false}
+						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
 					<Koef 
@@ -1905,6 +1935,7 @@ const Order = memo(({proj_id, user_id}: any) => {
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
 						isKoefsVisible={visibleKoefs[position.id] || false}
+						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
 					<Koef 
@@ -1944,6 +1975,7 @@ const Order = memo(({proj_id, user_id}: any) => {
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
 						isKoefsVisible={visibleKoefs[position.id] || false}
+						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
 					<Koef 
@@ -2002,6 +2034,7 @@ const Order = memo(({proj_id, user_id}: any) => {
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
 						isKoefsVisible={visibleKoefs[position.id] || false}
+						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
 					<Koef 
@@ -2041,6 +2074,7 @@ const Order = memo(({proj_id, user_id}: any) => {
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
 						isKoefsVisible={visibleKoefs[position.id] || false}
+						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
 					<Koef 
@@ -2092,6 +2126,7 @@ const Order = memo(({proj_id, user_id}: any) => {
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
 						isKoefsVisible={visibleKoefs[position.id] || false}
+						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
 					<Koef 
@@ -2128,6 +2163,7 @@ const Order = memo(({proj_id, user_id}: any) => {
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
 						isKoefsVisible={visibleKoefs[position.id] || false}
+						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
 					<Koef 
@@ -2174,6 +2210,7 @@ const Order = memo(({proj_id, user_id}: any) => {
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
 						isKoefsVisible={visibleKoefs[position.id] || false}
+						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
 					<Koef 
@@ -2210,6 +2247,7 @@ const Order = memo(({proj_id, user_id}: any) => {
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
 						isKoefsVisible={visibleKoefs[position.id] || false}
+						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
 					<Koef 
@@ -2247,6 +2285,7 @@ const Order = memo(({proj_id, user_id}: any) => {
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
 						isKoefsVisible={visibleKoefs[position.id] || false}
+						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
 					<Koef 
@@ -2436,6 +2475,6 @@ const Order = memo(({proj_id, user_id}: any) => {
 		</>
 	)
 
-})
+}
 
 export default Order

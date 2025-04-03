@@ -2,12 +2,12 @@
 'use client'
 
 import { dbGetKoefs, dbGetProject } from '@/actions/Db'
-import { useCallback, useEffect, useState, memo } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 // import { Document, Packer, Paragraph, TextRun } from "docx";
 // import { saveAs } from "file-saver";
 
-const OrderKp = memo(({proj_id, user_id}: any) => { 
+const OrderKp = ({proj_id, user_id}: any) => { 
 
 	const [positions, setPositions] = useState<any | null>(null)
 	const [docKoefs, setDocKoefs] = useState<any | null>(null)
@@ -1297,6 +1297,6 @@ const OrderKp = memo(({proj_id, user_id}: any) => {
 		</>
 	)
 
-})
+}
 
 export default OrderKp

@@ -2,13 +2,13 @@
 'use client'
 
 import { dbGetKoefs, dbGetProject } from '@/actions/Db'
-import { useEffect, useState, memo } from 'react'
+import { useEffect, useState } from 'react'
 import Position from './Position'
 
 // import { Document, Packer, Paragraph, TextRun } from "docx";
 // import { saveAs } from "file-saver";
 
-const OrderSp = memo(({proj_id, user_id}: any) => { 
+const OrderSp = ({proj_id, user_id}: any) => { 
 
 	const [positions, setPositions] = useState<any | null>(null)
 	const [docKoefs, setDocKoefs] = useState<any | null>(null)
@@ -484,6 +484,6 @@ const OrderSp = memo(({proj_id, user_id}: any) => {
 		</>
 	)
 
-})
+}
 
 export default OrderSp

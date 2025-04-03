@@ -1,6 +1,6 @@
 /* eslint-disable react/display-name */
-import { AdjustmentsHorizontalIcon, LockClosedIcon } from "@heroicons/react/24/outline";
-import { memo, useEffect, useState } from "react";
+import { AdjustmentsHorizontalIcon, LockClosedIcon, MinusCircleIcon } from "@heroicons/react/24/outline";
+import {  useEffect, useState } from "react";
 
 const readOnlyIds = [
 	'1_2', '1_3', '1_4', '1_5', '1_6', '1_7', // Фундамент
@@ -35,7 +35,8 @@ const readOnlyIds = [
 	'23_10' // Межкомнатные перегородки утеплитель 50
 ]
 
-const Position = memo(({ docKoefs, position, handlePosChange, uniqueId, toggleKoefsVisibility, isKoefsVisible }: any) => {
+const Position = ({ docKoefs, position, handlePosChange, uniqueId, toggleKoefsVisibility, isKoefsVisible, handleDeleteClick }: any) => {
+	// const [isDeletePositionModalOpen, setIsDeletePositionModalOpen] = useState(false);
 
 	const [measure, setMeasure] = useState( position.measure )
 	const [price, setPrice] = useState( Number(position.price) )
@@ -152,11 +153,12 @@ const Position = memo(({ docKoefs, position, handlePosChange, uniqueId, toggleKo
 			</div>
 			<div className='w-1/12 my-auto flex-row flex'>
 				{position.secured && <LockClosedIcon className="w-5 ml-auto text-gray-300" />}
+				{!position.secured && <MinusCircleIcon onClick={()=>handleDeleteClick(position.id)} className="w-5 ml-auto text-gray-800 cursor-pointer" />}
 			</div>
 		</div>
 
 	</>
 	)
-})
+}
 export default Position
 

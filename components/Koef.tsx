@@ -1,8 +1,8 @@
-import { memo, useCallback } from "react"
+import { useCallback } from "react"
 
 
 // eslint-disable-next-line react/display-name
-const Koef = memo(({ handleKoefChange, handleKoefNameChange, koef, pos_id }: any) => {
+const Koef = ({ handleKoefChange, handleKoefNameChange, koef, pos_id }: any) => {
 
 	const onNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
 		handleKoefNameChange(koef.id, pos_id, koef.koef_code, koef.is_balancer, e.target.value);
@@ -57,6 +57,6 @@ const Koef = memo(({ handleKoefChange, handleKoefNameChange, koef, pos_id }: any
 
 	)
 
-})
+}
 
 export default Koef
