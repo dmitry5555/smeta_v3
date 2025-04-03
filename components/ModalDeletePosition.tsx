@@ -1,6 +1,6 @@
 import { dbDeletePosition } from "@/actions/Db";
 
-const ModalDeletePosition = ({ projectId, positionId , onClose } ) => {
+const ModalDeletePosition = ({ projectId, positionId , onClose }: any ) => {
 
 
     const handleSubmit = async (e: any) => {
