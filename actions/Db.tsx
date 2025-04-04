@@ -10,15 +10,20 @@ dotenv.config()
 
 export const dbAddUser = async (name: string, email: string, password: string) => {
 	if (email && password) {
-		const user = await prisma.users.create({
-			data: {
-				name,
-				email,
-				password: await bcrypt.hash(password, 10),
-				role: 'manager',
-			},
-		});
-		return user;
+		try {
+			const user = await prisma.users.create({
+				data: {
+					name,
+					email,
+					password: await bcrypt.hash(password, 10),
+					role: 'manager',
+				},
+			});
+			return user;
+		} catch (error) {
+			console.error("Error adding user:", error);
+        	// throw new Error(`Failed to add user: ${error.message}`);
+		}
 	}
 }
 
@@ -129,7 +134,7 @@ export const dbUpdateProjectInfo = async (project_id: number, client: string, de
 				location,
 				name,
 				phone1,
-				updatedAt: new Date(),
+				// updatedAt: new Date(),
 			},
 		})
 		return true
@@ -237,7 +242,7 @@ export const dbUpdateProjectInfo = async (project_id: number, client: string, de
 						price: field.price,
 						finalKoef: field.finalKoef,
 						valueNoKoef: field.valueNoKoef,
-						updatedAt: new Date()
+						// updatedAt: new Date()
 						// Добавьте другие обновляемые поля здесь
 					}
 					});
@@ -256,7 +261,8 @@ export const dbUpdateProjectInfo = async (project_id: number, client: string, de
 		});
 		return true;
 	} catch (error) {
-		return false;
+		console.error('Error updating positions:', error)
+		return false
 	}
   };
 

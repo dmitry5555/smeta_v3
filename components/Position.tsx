@@ -35,7 +35,7 @@ const readOnlyIds = [
 	'23_10' // Межкомнатные перегородки утеплитель 50
 ]
 
-const Position = ({ docKoefs, position, handlePosChange, uniqueId, toggleKoefsVisibility, isKoefsVisible, handleDeleteClick }: any) => {
+const Position = ({ docKoefs, position, handlePosChange, uniqueId, toggleKoefsVisibility, handleDeleteClick }: any) => {
 	// const [isDeletePositionModalOpen, setIsDeletePositionModalOpen] = useState(false);
 
 	const [measure, setMeasure] = useState( position.measure )
@@ -109,7 +109,7 @@ const Position = ({ docKoefs, position, handlePosChange, uniqueId, toggleKoefsVi
 					type="number"
 					onWheel={(e) => (e.target as HTMLInputElement).blur()}
 					inputMode="decimal"
-					readOnly={readOnlyIds.includes(uniqueId)}
+					readOnly={readOnlyIds.includes(position.fixed_id)}
 					step="any"
 					value={position.value}
 					onKeyDown={(event) => {

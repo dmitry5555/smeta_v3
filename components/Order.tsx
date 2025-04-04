@@ -20,6 +20,7 @@ const Order = ({proj_id, user_id}: any) => {
 	const [positions, setPositions] = useState<any | null>(null)
 	const [docKoefs, setDocKoefs] = useState<any | null>(null)
 	const [sums, setSums] = useState<any | null>(null)
+	// const [openedAt, setOpenedAt] = useState<Date | null>(null)
 	
 	const handleDeleteClick = (positionId: any) => {
 		setSelectedPosition(positionId)
@@ -40,29 +41,42 @@ const Order = ({proj_id, user_id}: any) => {
 			// console.log(koefs)
 		    setPositions(data?.fields)
 			setProjectInfo(data)
-		};
-		fetchFields();
-	}, [proj_id]);
+			// для защиты от двойных обновлений 
+			// setOpenedAt(new Date())
+			// console.log('opened at:', new Date())
+			console.log('updated at:', data?.updatedAt)
+		}
+		fetchFields()
+	}, [proj_id])
 
 	const saveProject = async () => {
+		
 		try {
+			const data = await dbGetProject(proj_id)
+			console.log('new saveProject data: ', data?.updatedAt)
+			console.log('old saveProject data: ', projectInfo?.updatedAt)
+			if (data?.updatedAt && projectInfo?.updatedAt && 
+				new Date(data.updatedAt).getTime() !== new Date(projectInfo.updatedAt).getTime()) {
+				setFormChanged(4)
+				return
+			}
 			// console.log('projectInfo: ', projectInfo)
 			// const updateProject = await dbUpdateProjectInfo(projectInfo, user_id)
 			setFormChanged(3)
 			const updateProject = await dbUpdateProjectInfo(projectInfo.id, projectInfo.client, projectInfo.description, projectInfo.dog_num, projectInfo.location, projectInfo.name, projectInfo.phone1, user_id)
-			console.log('Project updated successfully:', updateProject)
+			// console.log('Project updated successfully:', updateProject)
 			const updatePositions = await dbUpdatePositions(projectInfo.id, positions)
-			console.log('Positions updated:', updatePositions)
+			// console.log('Positions updated:', updatePositions)
 			const updateKoefs = await dbUpdateKoefs(docKoefs)
-			console.log('Koefs updated:', updateKoefs)
+			// console.log('Koefs updated:', updateKoefs)
 			if(updateProject && updatePositions && updateKoefs) {
 				setFormChanged(0)
+				window.location.href = `/project/${projectInfo.id}`
 			} else {
 				setFormChanged(2)
 			}
-			// window.location.href = `/project/${projectInfo.id}`;
 		} catch (error) {
-		  	console.error('Error updating project:', error);
+		  	console.error('Error updating project:', error)
 		}
 	};
 
@@ -168,33 +182,33 @@ const Order = ({proj_id, user_id}: any) => {
 					return { ...pos, value: Math.round((value + pos2.value + pos3.value + pos4.value) * 100) / 100 }
 				}
 				
-				// кровля стропилы + контробрешетки + обрешетки   -  в антисеп
-				if ((fixed_id === '5_1') && ['4_11'].includes(pos.fixed_id) ) {
-					const pos2 = positions.find((pos: any) => pos.fixed_id === '5_2')
-					const pos3 = positions.find((pos: any) => pos.fixed_id === '5_3')
-					const pos4 = positions.find((pos: any) => pos.fixed_id === '5_4')
-					return { ...pos, value: value + pos2.value + pos3.value + pos4.value }
-				}
-				if ((fixed_id === '5_2') && ['4_11'].includes(pos.fixed_id) ) {
-					// сумма двух позиций
-					const pos2 = positions.find((pos: any) => pos.fixed_id === '5_1')
-					const pos3 = positions.find((pos: any) => pos.fixed_id === '5_3')
-					const pos4 = positions.find((pos: any) => pos.fixed_id === '5_4')
-					return { ...pos, value: value + pos2.value + pos3.value + pos4.value }
-				}
+				// кровля (нет)стропилы + контробрешетки + обрешетки   -  в антисеп
+				// if ((fixed_id === '5_1') && ['4_11'].includes(pos.fixed_id) ) {
+				// 	const pos2 = positions.find((pos: any) => pos.fixed_id === '5_2')
+				// 	const pos3 = positions.find((pos: any) => pos.fixed_id === '5_3')
+				// 	const pos4 = positions.find((pos: any) => pos.fixed_id === '5_4')
+				// 	return { ...pos, value: value + pos2.value + pos3.value + pos4.value }
+				// }
+				// if ((fixed_id === '5_2') && ['4_11'].includes(pos.fixed_id) ) {
+				// 	// сумма двух позиций
+				// 	const pos2 = positions.find((pos: any) => pos.fixed_id === '5_1')
+				// 	const pos3 = positions.find((pos: any) => pos.fixed_id === '5_3')
+				// 	const pos4 = positions.find((pos: any) => pos.fixed_id === '5_4')
+				// 	return { ...pos, value: value + pos2.value + pos3.value + pos4.value }
+				// }
 				if ((fixed_id === '5_3') && ['4_11'].includes(pos.fixed_id) ) {
 					// сумма двух позиций
-					const pos2 = positions.find((pos: any) => pos.fixed_id === '5_1')
-					const pos3 = positions.find((pos: any) => pos.fixed_id === '5_2')
+					// const pos2 = positions.find((pos: any) => pos.fixed_id === '5_1')
+					// const pos3 = positions.find((pos: any) => pos.fixed_id === '5_2')
 					const pos4 = positions.find((pos: any) => pos.fixed_id === '5_4')
-					return { ...pos, value: value + pos2.value + pos3.value + pos4.value }
+					return { ...pos, value: value  + pos4.value }
 				}
 				if ((fixed_id === '5_4') && ['4_11'].includes(pos.fixed_id) ) {
 					// сумма двух позиций
-					const pos2 = positions.find((pos: any) => pos.fixed_id === '5_1')
-					const pos3 = positions.find((pos: any) => pos.fixed_id === '5_2')
+					// const pos2 = positions.find((pos: any) => pos.fixed_id === '5_1')
+					// const pos3 = positions.find((pos: any) => pos.fixed_id === '5_2')
 					const pos4 = positions.find((pos: any) => pos.fixed_id === '5_3')
-					return { ...pos, value: value + pos2.value + pos3.value + pos4.value }
+					return { ...pos, value: value + pos4.value }
 				}
 
 				// фасад Подшив свесов кровли , копия в шлифовку
@@ -702,7 +716,7 @@ const Order = ({proj_id, user_id}: any) => {
 
 	return (
 		<>
-			{isDeletePositionModalOpen && selectedPosition && <ModalDeletePosition projectId={proj_id} positionId={selectedPosition} onClose={() => setIsDeletePositionModalOpen(false)} />}
+			{isDeletePositionModalOpen && selectedPosition && <ModalDeletePosition projectId={proj_id} positionId={selectedPosition} onClose={()=>setIsDeletePositionModalOpen(false)} />}
 			
 			<div className='bg-white flex flex-col max-w-screen-2xl mx-auto w-full mb-6'>
 				<div className='bg-white sticky top-0 z-100'>
@@ -721,8 +735,9 @@ const Order = ({proj_id, user_id}: any) => {
 								<Cog6ToothIcon className='w-5' />
 							</div>
 							<button onClick={saveProject} className='text-white px-3 py-2 text-sm border border-transparent font-semibold bg-blue-600 rounded-lg disabled:opacity-40' disabled={!formChanged}>Сохранить</button>
-							{formChanged === 2 && <div className='my-auto'>⚠️</div>}
-							{formChanged === 3 && <div className='my-auto'>⏱️</div>}
+							{formChanged === 2 && <div className='my-auto text-sm'>⚠️</div>}
+							{formChanged === 3 && <div className='my-auto text-sm'>⏱️</div>}
+							{formChanged === 4 && <div className='my-auto text-xs'>⚠️ Проект был изменен. Обновите страницу. </div>}
 						</div>
 					</div>
 					<div id='project-info' className={`border border-b-0 flex flex-col px-6 pt-6 pb-8 text-sm gap-4 transition-all duration-500 ease-in-out ${isProjectInfoOpen ? 'hidden' : ''}`}>
@@ -794,17 +809,18 @@ const Order = ({proj_id, user_id}: any) => {
 						handlePosChange={handlePosChange}
 						uniqueId={`${position.code}_${index + 1}`}
 						toggleKoefsVisibility={toggleKoefsVisibility}
-						isKoefsVisible={visibleKoefs[position.id] || false}
 						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
+					<div key={`koef-${koef.id}`}>
 					<Koef 
 						handleKoefChange={handleKoefChange}
 						handleKoefNameChange={handleKoefNameChange}
-						key={koef.id}
 						koef={koef}
 						pos_id={position.id}
 					/>
+					</div>
+
 					))}
 				</div>
 				))}
@@ -875,17 +891,18 @@ const Order = ({proj_id, user_id}: any) => {
 						handlePosChange={handlePosChange}
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
-						isKoefsVisible={visibleKoefs[position.id] || false}
 						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
+					<div key={`koef-${koef.id}`}>
 					<Koef 
 						handleKoefChange={handleKoefChange}
 						handleKoefNameChange={handleKoefNameChange}
-						key={koef.id}
 						koef={koef}
 						pos_id={position.id}
 					/>
+					</div>
+
 					))}
 				</div>
 				))}
@@ -917,17 +934,18 @@ const Order = ({proj_id, user_id}: any) => {
 						handlePosChange={handlePosChange}
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
-						isKoefsVisible={visibleKoefs[position.id] || false}
 						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
+					<div key={`koef-${koef.id}`}>
 					<Koef 
 						handleKoefChange={handleKoefChange}
 						handleKoefNameChange={handleKoefNameChange}
-						key={koef.id}
 						koef={koef}
 						pos_id={position.id}
 					/>
+					</div>
+
 					))}
 				</div>
 				))}
@@ -966,17 +984,18 @@ const Order = ({proj_id, user_id}: any) => {
 						handlePosChange={handlePosChange}
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
-						isKoefsVisible={visibleKoefs[position.id] || false}
 						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
+					<div key={`koef-${koef.id}`}>
 					<Koef 
 						handleKoefChange={handleKoefChange}
 						handleKoefNameChange={handleKoefNameChange}
-						key={koef.id}
 						koef={koef}
 						pos_id={position.id}
 					/>
+					</div>
+
 					))}
 				</div>
 				))}
@@ -1006,17 +1025,18 @@ const Order = ({proj_id, user_id}: any) => {
 						handlePosChange={handlePosChange}
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
-						isKoefsVisible={visibleKoefs[position.id] || false}
 						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
+					<div key={`koef-${koef.id}`}>
 					<Koef 
 						handleKoefChange={handleKoefChange}
 						handleKoefNameChange={handleKoefNameChange}
-						key={koef.id}
 						koef={koef}
 						pos_id={position.id}
 					/>
+					</div>
+
 					))}
 				</div>
 				))}
@@ -1195,17 +1215,18 @@ const Order = ({proj_id, user_id}: any) => {
 						handlePosChange={handlePosChange}
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
-						isKoefsVisible={visibleKoefs[position.id] || false}
 						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any) => (
+					<div key={`koef-${koef.id}`}>
 					<Koef 
 						handleKoefChange={handleKoefChange}
 						handleKoefNameChange={handleKoefNameChange}
-						key={koef.id}
 						koef={koef}
 						pos_id={position.id}
 					/>
+					</div>
+
 					))}
 				</div>
 				))}
@@ -1236,17 +1257,18 @@ const Order = ({proj_id, user_id}: any) => {
 						handlePosChange={handlePosChange}
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
-						isKoefsVisible={visibleKoefs[position.id] || false}
 						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
+					<div key={`koef-${koef.id}`}>
 					<Koef 
 						handleKoefChange={handleKoefChange}
 						handleKoefNameChange={handleKoefNameChange}
-						key={koef.id}
 						koef={koef}
 						pos_id={position.id}
 					/>
+					</div>
+
 					))}
 				</div>
 				))}
@@ -1287,17 +1309,19 @@ const Order = ({proj_id, user_id}: any) => {
 						handlePosChange={handlePosChange}
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
-						isKoefsVisible={visibleKoefs[position.id] || false}
 						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
+					<div key={`koef-${koef.id}`}>
 					<Koef 
 						handleKoefChange={handleKoefChange}
 						handleKoefNameChange={handleKoefNameChange}
-						key={koef.id}
 						koef={koef}
 						pos_id={position.id}
 					/>
+					</div>
+
+
 					))}
 				</div>
 				))}
@@ -1328,17 +1352,19 @@ const Order = ({proj_id, user_id}: any) => {
 						handlePosChange={handlePosChange}
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
-						isKoefsVisible={visibleKoefs[position.id] || false}
 						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
+					<div key={`koef-${koef.id}`}>
 					<Koef 
 						handleKoefChange={handleKoefChange}
 						handleKoefNameChange={handleKoefNameChange}
-						key={koef.id}
 						koef={koef}
 						pos_id={position.id}
 					/>
+					</div>
+
+
 					))}
 				</div>
 				))}
@@ -1378,17 +1404,18 @@ const Order = ({proj_id, user_id}: any) => {
 						handlePosChange={handlePosChange}
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
-						isKoefsVisible={visibleKoefs[position.id] || false}
 						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
+					<div key={`koef-${koef.id}`}>
 					<Koef 
 						handleKoefChange={handleKoefChange}
 						handleKoefNameChange={handleKoefNameChange}
-						key={koef.id}
 						koef={koef}
 						pos_id={position.id}
 					/>
+					</div>
+
 					))}
 				</div>
 				))}
@@ -1417,17 +1444,18 @@ const Order = ({proj_id, user_id}: any) => {
 						handlePosChange={handlePosChange}
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
-						isKoefsVisible={visibleKoefs[position.id] || false}
 						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
+					<div key={`koef-${koef.id}`}>
 					<Koef 
 						handleKoefChange={handleKoefChange}
 						handleKoefNameChange={handleKoefNameChange}
-						key={koef.id}
 						koef={koef}
 						pos_id={position.id}
 					/>
+					</div>
+
 					))}
 				</div>
 				))}
@@ -1477,17 +1505,18 @@ const Order = ({proj_id, user_id}: any) => {
 						handlePosChange={handlePosChange}
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
-						isKoefsVisible={visibleKoefs[position.id] || false}
 						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
+					<div key={`koef-${koef.id}`}>
 					<Koef 
 						handleKoefChange={handleKoefChange}
 						handleKoefNameChange={handleKoefNameChange}
-						key={koef.id}
 						koef={koef}
 						pos_id={position.id}
 					/>
+					</div>
+
 					))}
 				</div>
 				))}
@@ -1516,17 +1545,18 @@ const Order = ({proj_id, user_id}: any) => {
 						handlePosChange={handlePosChange}
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
-						isKoefsVisible={visibleKoefs[position.id] || false}
 						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
+					<div key={`koef-${koef.id}`}>
 					<Koef 
 						handleKoefChange={handleKoefChange}
 						handleKoefNameChange={handleKoefNameChange}
-						key={koef.id}
 						koef={koef}
 						pos_id={position.id}
 					/>
+					</div>
+
 					))}
 				</div>
 				))}
@@ -1565,17 +1595,18 @@ const Order = ({proj_id, user_id}: any) => {
 						handlePosChange={handlePosChange}
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
-						isKoefsVisible={visibleKoefs[position.id] || false}
 						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
+					<div key={`koef-${koef.id}`}>
 					<Koef 
 						handleKoefChange={handleKoefChange}
 						handleKoefNameChange={handleKoefNameChange}
-						key={koef.id}
 						koef={koef}
 						pos_id={position.id}
 					/>
+					</div>
+
 					))}
 				</div>
 				))}
@@ -1605,17 +1636,17 @@ const Order = ({proj_id, user_id}: any) => {
 						handlePosChange={handlePosChange}
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
-						isKoefsVisible={visibleKoefs[position.id] || false}
 						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
+					<div key={`koef-${koef.id}`}>
 					<Koef 
 						handleKoefChange={handleKoefChange}
 						handleKoefNameChange={handleKoefNameChange}
-						key={koef.id}
 						koef={koef}
 						pos_id={position.id}
 					/>
+					</div>
 					))}
 				</div>
 				))}
@@ -1663,17 +1694,17 @@ const Order = ({proj_id, user_id}: any) => {
 						handlePosChange={handlePosChange}
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
-						isKoefsVisible={visibleKoefs[position.id] || false}
 						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
+					<div key={`koef-${koef.id}`}>
 					<Koef 
 						handleKoefChange={handleKoefChange}
 						handleKoefNameChange={handleKoefNameChange}
-						key={koef.id}
 						koef={koef}
 						pos_id={position.id}
 					/>
+					</div>
 					))}
 				</div>
 				))}
@@ -1703,17 +1734,17 @@ const Order = ({proj_id, user_id}: any) => {
 						handlePosChange={handlePosChange}
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
-						isKoefsVisible={visibleKoefs[position.id] || false}
 						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
+					<div key={`koef-${koef.id}`}>
 					<Koef 
 						handleKoefChange={handleKoefChange}
 						handleKoefNameChange={handleKoefNameChange}
-						key={koef.id}
 						koef={koef}
 						pos_id={position.id}
 					/>
+					</div>
 					))}
 				</div>
 				))}
@@ -1753,17 +1784,17 @@ const Order = ({proj_id, user_id}: any) => {
 						handlePosChange={handlePosChange}
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
-						isKoefsVisible={visibleKoefs[position.id] || false}
 						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
+					<div key={`koef-${koef.id}`}>
 					<Koef 
 						handleKoefChange={handleKoefChange}
 						handleKoefNameChange={handleKoefNameChange}
-						key={koef.id}
 						koef={koef}
 						pos_id={position.id}
 					/>
+					</div>
 					))}
 				</div>
 				))}
@@ -1793,17 +1824,17 @@ const Order = ({proj_id, user_id}: any) => {
 						handlePosChange={handlePosChange}
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
-						isKoefsVisible={visibleKoefs[position.id] || false}
 						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
+					<div key={`koef-${koef.id}`}>
 					<Koef 
 						handleKoefChange={handleKoefChange}
 						handleKoefNameChange={handleKoefNameChange}
-						key={koef.id}
 						koef={koef}
 						pos_id={position.id}
 					/>
+					</div>
 					))}
 				</div>
 				))}
@@ -1843,17 +1874,17 @@ const Order = ({proj_id, user_id}: any) => {
 						handlePosChange={handlePosChange}
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
-						isKoefsVisible={visibleKoefs[position.id] || false}
 						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
+					<div key={`koef-${koef.id}`}>
 					<Koef 
 						handleKoefChange={handleKoefChange}
 						handleKoefNameChange={handleKoefNameChange}
-						key={koef.id}
 						koef={koef}
 						pos_id={position.id}
 					/>
+					</div>
 					))}
 				</div>
 				))}
@@ -1883,17 +1914,17 @@ const Order = ({proj_id, user_id}: any) => {
 						handlePosChange={handlePosChange}
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
-						isKoefsVisible={visibleKoefs[position.id] || false}
 						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
+					<div key={`koef-${koef.id}`}>
 					<Koef 
 						handleKoefChange={handleKoefChange}
 						handleKoefNameChange={handleKoefNameChange}
-						key={koef.id}
 						koef={koef}
 						pos_id={position.id}
 					/>
+					</div>
 					))}
 				</div>
 				))}
@@ -1934,17 +1965,17 @@ const Order = ({proj_id, user_id}: any) => {
 						handlePosChange={handlePosChange}
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
-						isKoefsVisible={visibleKoefs[position.id] || false}
 						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
+					<div key={`koef-${koef.id}`}>
 					<Koef 
 						handleKoefChange={handleKoefChange}
 						handleKoefNameChange={handleKoefNameChange}
-						key={koef.id}
 						koef={koef}
 						pos_id={position.id}
 					/>
+					</div>
 					))}
 				</div>
 				))}
@@ -1974,17 +2005,17 @@ const Order = ({proj_id, user_id}: any) => {
 						handlePosChange={handlePosChange}
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
-						isKoefsVisible={visibleKoefs[position.id] || false}
 						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
+					<div key={`koef-${koef.id}`}>
 					<Koef 
 						handleKoefChange={handleKoefChange}
 						handleKoefNameChange={handleKoefNameChange}
-						key={koef.id}
 						koef={koef}
 						pos_id={position.id}
 					/>
+					</div>
 					))}
 				</div>
 				))}
@@ -2033,17 +2064,17 @@ const Order = ({proj_id, user_id}: any) => {
 						handlePosChange={handlePosChange}
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
-						isKoefsVisible={visibleKoefs[position.id] || false}
 						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
+					<div key={`koef-${koef.id}`}>
 					<Koef 
 						handleKoefChange={handleKoefChange}
 						handleKoefNameChange={handleKoefNameChange}
-						key={koef.id}
 						koef={koef}
 						pos_id={position.id}
 					/>
+					</div>
 					))}
 				</div>
 				))}
@@ -2073,17 +2104,17 @@ const Order = ({proj_id, user_id}: any) => {
 						handlePosChange={handlePosChange}
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
-						isKoefsVisible={visibleKoefs[position.id] || false}
 						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
+					<div key={`koef-${koef.id}`}>
 					<Koef 
 						handleKoefChange={handleKoefChange}
 						handleKoefNameChange={handleKoefNameChange}
-						key={koef.id}
 						koef={koef}
 						pos_id={position.id}
 					/>
+					</div>
 					))}
 				</div>
 				))}
@@ -2125,17 +2156,18 @@ const Order = ({proj_id, user_id}: any) => {
 						handlePosChange={handlePosChange}
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
-						isKoefsVisible={visibleKoefs[position.id] || false}
 						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
+					<div key={`koef-${koef.id}`}>
 					<Koef 
 						handleKoefChange={handleKoefChange}
 						handleKoefNameChange={handleKoefNameChange}
-						key={koef.id}
 						koef={koef}
 						pos_id={position.id}
 					/>
+					</div>
+
 					))}
 				</div>
 				))}
@@ -2162,17 +2194,18 @@ const Order = ({proj_id, user_id}: any) => {
 						handlePosChange={handlePosChange}
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
-						isKoefsVisible={visibleKoefs[position.id] || false}
 						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
+					<div key={`koef-${koef.id}`}>
 					<Koef 
 						handleKoefChange={handleKoefChange}
 						handleKoefNameChange={handleKoefNameChange}
-						key={koef.id}
 						koef={koef}
 						pos_id={position.id}
 					/>
+					</div>
+
 					))}
 				</div>
 				))}
@@ -2209,17 +2242,18 @@ const Order = ({proj_id, user_id}: any) => {
 						handlePosChange={handlePosChange}
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
-						isKoefsVisible={visibleKoefs[position.id] || false}
 						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
+					<div key={`koef-${koef.id}`}>
 					<Koef 
 						handleKoefChange={handleKoefChange}
 						handleKoefNameChange={handleKoefNameChange}
-						key={koef.id}
 						koef={koef}
 						pos_id={position.id}
 					/>
+					</div>
+
 					))}
 				</div>
 				))}
@@ -2246,17 +2280,18 @@ const Order = ({proj_id, user_id}: any) => {
 						handlePosChange={handlePosChange}
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
-						isKoefsVisible={visibleKoefs[position.id] || false}
 						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
+					<div key={`koef-${koef.id}`}>
 					<Koef 
 						handleKoefChange={handleKoefChange}
 						handleKoefNameChange={handleKoefNameChange}
-						key={koef.id}
 						koef={koef}
 						pos_id={position.id}
 					/>
+					</div>
+
 					))}
 				</div>
 				))}
@@ -2284,17 +2319,18 @@ const Order = ({proj_id, user_id}: any) => {
 						handlePosChange={handlePosChange}
 						uniqueId={`${position.code}_${index + 1}`} 
 						toggleKoefsVisibility={toggleKoefsVisibility}
-						isKoefsVisible={visibleKoefs[position.id] || false}
 						handleDeleteClick={handleDeleteClick}
 					/>
 					{visibleKoefs[position.id] && docKoefs && docKoefs.filter((koef: any) => koef.koef_code == position.koef_code).map((koef: any, koefIndex: any) => (
+					<div key={`koef-${koef.id}`}>
 					<Koef 
 						handleKoefChange={handleKoefChange}
 						handleKoefNameChange={handleKoefNameChange}
-						key={koef.id}
 						koef={koef}
 						pos_id={position.id}
 					/>
+					</div>
+
 					))}
 				</div>
 				))}
