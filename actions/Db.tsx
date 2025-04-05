@@ -220,8 +220,8 @@ export const dbUpdateProjectInfo = async (project_id: number, client: string, de
 						code: String(field.code),
 						name: field.name,
 						measure: field.measure,
-						value: field.value,
-						price: field.price,
+						value: Number(field.value),
+						price: Number(field.price),
 						// Добавьте другие необходимые поля здесь
 					}
 					});
@@ -238,9 +238,9 @@ export const dbUpdateProjectInfo = async (project_id: number, client: string, de
 						// code: field.code,
 						name: field.name,
 						measure: field.measure,
-						value: field.value,
-						price: field.price,
-						finalKoef: field.finalKoef,
+						value: Number(field.value),
+						price: Number(field.price),
+						finalKoef: Number(field.finalKoef),
 						valueNoKoef: field.valueNoKoef,
 						// updatedAt: new Date()
 						// Добавьте другие обновляемые поля здесь

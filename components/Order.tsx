@@ -44,7 +44,7 @@ const Order = ({proj_id, user_id}: any) => {
 			// для защиты от двойных обновлений 
 			// setOpenedAt(new Date())
 			// console.log('opened at:', new Date())
-			console.log('updated at:', data?.updatedAt)
+			// console.log('updated at:', data?.updatedAt)
 		}
 		fetchFields()
 	}, [proj_id])
@@ -53,8 +53,8 @@ const Order = ({proj_id, user_id}: any) => {
 		
 		try {
 			const data = await dbGetProject(proj_id)
-			console.log('new saveProject data: ', data?.updatedAt)
-			console.log('old saveProject data: ', projectInfo?.updatedAt)
+			// console.log('new saveProject data: ', data?.updatedAt)
+			// console.log('old saveProject data: ', projectInfo?.updatedAt)
 			if (data?.updatedAt && projectInfo?.updatedAt && 
 				new Date(data.updatedAt).getTime() !== new Date(projectInfo.updatedAt).getTime()) {
 				setFormChanged(4)
@@ -399,7 +399,7 @@ const Order = ({proj_id, user_id}: any) => {
 		let newValue = value
 		if ( value !== '') {
 			newValue = parseFloat(value)
-		} 
+		}
 		
 		setDocKoefs((koefs: any[]) => {
 			updatedKoefs = koefs.map((koef: any) => {
@@ -478,8 +478,11 @@ const Order = ({proj_id, user_id}: any) => {
 
 	// для коэф. ФИКС расход, фикс К1, К2  = используются в рассчетах ИТОГО
 	const handleKoefChangeByName = (name: string, value: any) => {
-		if (value !== '')
+		if (value !== '') {
 			value = parseFloat(value)
+		} else {
+			value = 0
+		}
 		let updatedKoefs: any[] = [];
 		setDocKoefs((koefs: any[]) => {
 			updatedKoefs = koefs.map((koef: any) => {
