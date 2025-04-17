@@ -165,3 +165,4 @@ dist
 .yarn/install-state.gz
 .pnp.*
 # prisma/dev.db
+.github/prompts/ru-code-fix.prompt.md

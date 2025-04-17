@@ -247,15 +247,26 @@ const Order = ({proj_id, user_id}: any) => {
 						// console.log('6_3[d] pos.finalKoef: ', pos.finalKoef)
 						return { ...pos, valueNoKoef: (value), value: Math.round((value + pos2.value) * 1.68 * 100) / 100 }
 					}
-					if ((fixed_id === '6_1') && ['7_2'].includes(pos.fixed_id) ) {
+					if ((fixed_id === '6_1') && ['7_3'].includes(pos.fixed_id) ) {
 						const pos2 = positions.find((pos: any) => pos.fixed_id === '6_2')
 						// console.log('6_3[d] pos.finalKoef: ', pos.finalKoef)
 						return { ...pos, valueNoKoef: (value), value: Math.round((value + pos2.value) * 1.68 * 100) / 100 }
 					}
-					if ((fixed_id === '6_2') && ['7_2'].includes(pos.fixed_id) ) {
+					if ((fixed_id === '6_2') && ['7_3'].includes(pos.fixed_id) ) {
 						const pos2 = positions.find((pos: any) => pos.fixed_id === '6_1')
 						// console.log('6_3[d] pos.finalKoef: ', pos.finalKoef)
 						return { ...pos, valueNoKoef: (value), value: Math.round((value + pos2.value) * 1.68 * 100) / 100 }
+					}
+					if ((fixed_id === '6_1') && ['7_2'].includes(pos.fixed_id) ) {
+						const pos2 = positions.find((pos: any) => pos.fixed_id === '6_2')
+						// console.log('7_2 pos.finalKoef: ', pos.finalKoef)
+						// console.log('valueNoKoef: ', value)
+						return { ...pos, valueNoKoef: (value + pos2.value), value: Math.round((value + pos2.value) * pos.finalKoef * 1.68 * 100) / 100 }
+					}
+					if ((fixed_id === '6_2') && ['7_2'].includes(pos.fixed_id) ) {
+						const pos2 = positions.find((pos: any) => pos.fixed_id === '6_1')
+						// console.log('6_3[d] pos.finalKoef: ', pos.finalKoef)
+						return { ...pos, valueNoKoef: (value + pos2.value), value: Math.round((value + pos2.value) * pos.finalKoef * 1.68 * 100) / 100 }
 					}
 					// if ((fixed_id === '7_1') && ['7_2'].includes(pos.fixed_id) ) {
 					// 	// const pos2 = positions.find((pos: any) => pos.fixed_id === '6_2')
@@ -310,7 +321,7 @@ const Order = ({proj_id, user_id}: any) => {
 						return { ...pos, value: value }
 					}
 					if ((fixed_id === '10_2') && ['11_3'].includes(pos.fixed_id) ) {
-						return { ...pos, valueNoKoef: (value ), value: Math.round(value * pos.finalKoef * 100) / 100 }
+						return { ...pos, valueNoKoef: (value), value: Math.round(value * pos.finalKoef * 100) / 100 }
 					}  
 					// утепление кровли 13_1 - 100  
 					if ((fixed_id === '12_1') && ['13_1'].includes(pos.fixed_id) ) {
@@ -419,7 +430,7 @@ const Order = ({proj_id, user_id}: any) => {
 	};
 
 	const handleKoefChange = (id: number, pos_id: number, koef_code: string, is_balancer: boolean, value: any) => {
-		// console.log('handleKoefChange', id, pos_id, koef_code, is_balancer, value)
+		console.log('handleKoefChange', id, pos_id, koef_code, is_balancer, value)
 		let updatedKoefs: any[] = [];
 
 		let newValue = value
@@ -474,19 +485,21 @@ const Order = ({proj_id, user_id}: any) => {
 							// console.log('CASE-1') // skipping
 							return { ...pos, value: Math.round( Math.ceil(pos.valueNoKoef * newKoef / balancerVal) * balancerVal * 1000) / 1000, finalKoef: newKoef } // orig
 						} else if (pos.koef_code == 'k11_3_doska') {
-							return { ...pos, value: Math.round(pos.valueNoKoef * newKoef * 1000) / 1000, finalKoef: newKoef }
+							return { ...pos, value: Math.round(pos.valueNoKoef * newKoef * 100) / 100, finalKoef: newKoef }
 						}
 						// else if (pos.koef_code == 'k17_13_fanera' || pos.koef_code == 'k19_9_fanera' || pos.koef_code == 'k28_9_antres_fanera' ||
 						// 	pos.koef_code == 'k7_2_okraska' || pos.koef_code ==  'k9_1_orkaska_fasad'|| pos.koef_code == 'k9_2_orkaska_perer') {
 						// 	console.log('CASE-2')
 						// 	return { ...pos, value: Math.ceil(pos.valueNoKoef * newKoef), finalKoef: newKoef }
 						// }
-							
+	
 						// } else if (pos.koef_code == 'k7_2_okraska' || 'k9_1_orkaska_fasad' || 'k9_2_orkaska_perer') {
-						// 	console.log('CASE-3')
-						// 	return { ...pos, value: Math.ceil(pos.valueNoKoef * newKoef), finalKoef: newKoef }
-						// 	// 7_2 9_1 9_2 k7_2_okraska  k9_1_orkaska_fasad   k9_2_orkaska_perer
-						// } 
+						else if (pos.koef_code == 'k7_2_okraska') {
+							// console.log('pos.valueNoKoef', pos.valueNoKoef)
+							// console.log('finalKoef', newKoef)
+							// find position
+							return { ...pos, value: Math.round(pos.valueNoKoef * newKoef * 1.68 * 100) / 100, finalKoef: newKoef }
+						} 
 						// console.log('CASE-4')
 						return { ...pos, value: Math.ceil(pos.valueNoKoef * newKoef), finalKoef: newKoef }
 						// return { ...pos, value: Math.round(pos.valueNoKoef * newKoef * 100) / 100, finalKoef: newKoef }
