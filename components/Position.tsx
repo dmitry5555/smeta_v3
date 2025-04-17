@@ -6,8 +6,8 @@ const readOnlyIds = [
 	'1_2', '1_3', '1_4', '1_5', '1_6', '1_7', // Фундамент
 	'2_1', '2_2', '2_4', // Стеновой комплект - монтаж + сборка + антисептирование
 	'4_11', // Антисептирование стропил, контробрешетки, обрешетки
-	// '6_3', '6_4', // Свесы кровли работы
-	'7_1', '7_2', '7_3', // Свесы кровли - Материалы
+	'6_3', // Свесы кровли работы
+	'7_2', '7_3', // Свесы кровли - Материалы
 	'9_1', '9_2', '9_3',  // Окраска фасада - Материалы
 
 	'10_3',  // Терраса - монтаж доски пода
@@ -110,7 +110,7 @@ const Position = ({ docKoefs, position, handlePosChange, uniqueId, toggleKoefsVi
 			</div>
 			<div className='w-1/12 my-auto'>
 				<input onChange={handleValueChange} name='value' className={`${readOnlyIds.includes(position.fixed_id) ? 'bg-slate-50' : ''} no-num-arrows w-20 max-w-full py-2 px-3 rounded-lg border my-auto`} 
-					type="text"
+					type="number"
 					onWheel={(e) => (e.target as HTMLInputElement).blur()}
 					// inputMode="decimal"
 					readOnly={readOnlyIds.includes(position.fixed_id)}
@@ -130,7 +130,7 @@ const Position = ({ docKoefs, position, handlePosChange, uniqueId, toggleKoefsVi
 			</div>
 			<div className='w-1/12 my-auto'>
 				<input onChange={handlePriceChange} name='price' className='no-num-arrows w-20 max-w-full py-2 px-3 rounded-lg border my-auto'  
-					type="text"
+					type="number"
 					onWheel={(e) => (e.target as HTMLInputElement).blur()}
 					step="any"
 					value={position.price}
@@ -165,4 +165,3 @@ const Position = ({ docKoefs, position, handlePosChange, uniqueId, toggleKoefsVi
 	)
 }
 export default Position
-

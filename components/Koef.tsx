@@ -5,23 +5,23 @@ import { useCallback } from "react"
 const Koef = ({ handleKoefChange, handleKoefNameChange, koef, pos_id }: any) => {
 
 	const onNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-		handleKoefNameChange(koef.id, pos_id, koef.koef_code, koef.is_balancer, e.target.value);
+		handleKoefNameChange(koef.id, pos_id, koef.koef_code, koef.is_balancer, Number(e.target.value));
 	}, [handleKoefNameChange, koef, pos_id])
 
 	const onValueChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-		handleKoefChange(koef.id, pos_id, koef.koef_code, koef.is_balancer, e.target.value);
+		handleKoefChange(koef.id, pos_id, koef.koef_code, koef.is_balancer, Number(e.target.value));
 	}, [handleKoefChange, koef, pos_id])
 
-	const onKeyDown = useCallback((event: React.KeyboardEvent<HTMLInputElement>) => {
-		if (!/[0-9.]/.test(event.key) && 
-			event.key !== 'Backspace' && 
-			event.key !== 'Delete' && 
-			event.key !== 'ArrowLeft' && 
-			event.key !== 'ArrowRight' && 
-			event.key !== 'Tab') {
-			event.preventDefault();
-		}
-	}, [])
+	// const onKeyDown = useCallback((event: React.KeyboardEvent<HTMLInputElement>) => {
+	// 	if (!/[0-9.]/.test(event.key) && 
+	// 		event.key !== 'Backspace' && 
+	// 		event.key !== 'Delete' && 
+	// 		event.key !== 'ArrowLeft' && 
+	// 		event.key !== 'ArrowRight' && 
+	// 		event.key !== 'Tab') {
+	// 		event.preventDefault();
+	// 	}
+	// }, [])
 
 	return (
 		
