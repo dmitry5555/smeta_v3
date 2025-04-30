@@ -5,11 +5,11 @@ import { useCallback } from "react"
 const Koef = ({ handleKoefChange, handleKoefNameChange, koef, pos_id }: any) => {
 
 	const onNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-		handleKoefNameChange(koef.id, pos_id, koef.koef_code, koef.is_balancer, Number(e.target.value));
+		handleKoefNameChange(koef.id, pos_id, koef.koef_code, koef.is_balancer, e.target.value);
 	}, [handleKoefNameChange, koef, pos_id])
 
 	const onValueChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-		handleKoefChange(koef.id, pos_id, koef.koef_code, koef.is_balancer, Number(e.target.value));
+		handleKoefChange(koef.id, pos_id, koef.koef_code, koef.is_balancer, e.target.value);
 	}, [handleKoefChange, koef, pos_id])
 
 	// const onKeyDown = useCallback((event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -35,21 +35,26 @@ const Koef = ({ handleKoefChange, handleKoefNameChange, koef, pos_id }: any) => 
 			</div>
 			<div className='w-2/12 my-auto mr-0 ml-4'>
 				<input onChange={onValueChange}
+					onWheel={(e) => (e.target as HTMLInputElement).blur()}
 					name='value' 
 					className='no-num-arrows w-20 max-w-full py-2 px-3 rounded-lg border my-auto'
 					type="number"
-					onWheel={(e) => (e.target as HTMLInputElement).blur()}
 					step="any"
 					value={koef.value}
 					onKeyDown={(event) => {
-					if (!/[0-9.]/.test(event.key) && 
-						event.key !== 'Backspace' && 
-						event.key !== 'Delete' && 
-						event.key !== 'ArrowLeft' && 
-						event.key !== 'ArrowRight' && 
-						event.key !== 'Tab') {
-						event.preventDefault();
-					}
+						const isNumeric = /[0-9.]/.test(event.key);
+						const isSpecialKey = 
+							event.key === 'Backspace' || 
+							event.key === 'Delete' || 
+							event.key === 'ArrowLeft' || 
+							event.key === 'ArrowRight' || 
+							event.key === 'Tab' || 
+							event.key === 'NumPadDecimal' || 
+							event.key === 'Period';
+					
+						if (!isNumeric && !isSpecialKey) {
+							event.preventDefault();
+						}
 					}}
 				/>
 			</div>

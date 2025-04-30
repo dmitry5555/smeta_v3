@@ -68,7 +68,7 @@ const Position = ({ docKoefs, position, handlePosChange, uniqueId, toggleKoefsVi
 		if ( e.target.value !== '') {
 			newValue = parseFloat(e.target.value)
 		} else {
-			newValue = 0
+			// newValue = 0
 		}
 		// const newValue = parseFloat(e.target.value)
 		// console.log('e value: ', typeof(e.target.value))
@@ -84,7 +84,7 @@ const Position = ({ docKoefs, position, handlePosChange, uniqueId, toggleKoefsVi
 		if ( e.target.value !== '') {
 			newPrice = parseFloat(e.target.value)
 		} else {
-			newPrice = 0
+			// newPrice = 0
 		}
 		setPrice(newPrice)
 		setTotal(Number((newPrice * value).toFixed(0)))
@@ -112,7 +112,7 @@ const Position = ({ docKoefs, position, handlePosChange, uniqueId, toggleKoefsVi
 				<input onChange={handleValueChange} name='value' className={`${readOnlyIds.includes(position.fixed_id) ? 'bg-slate-50' : ''} no-num-arrows w-20 max-w-full py-2 px-3 rounded-lg border my-auto`} 
 					type="number"
 					onWheel={(e) => (e.target as HTMLInputElement).blur()}
-					// inputMode="decimal"
+					inputMode="decimal"
 					readOnly={readOnlyIds.includes(position.fixed_id)}
 					step="any"
 					value={position.value}

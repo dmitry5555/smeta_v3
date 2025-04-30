@@ -55,11 +55,14 @@ const Order = ({proj_id, user_id}: any) => {
 			const data = await dbGetProject(proj_id)
 			// console.log('new saveProject data: ', data?.updatedAt)
 			// console.log('old saveProject data: ', projectInfo?.updatedAt)
-			if (data?.updatedAt && projectInfo?.updatedAt && 
-				new Date(data.updatedAt).getTime() !== new Date(projectInfo.updatedAt).getTime()) {
-				setFormChanged(4)
-				return
-			}
+
+			// проверка изменения проекта
+			// if (data?.updatedAt && projectInfo?.updatedAt && 
+			// 	new Date(data.updatedAt).getTime() !== new Date(projectInfo.updatedAt).getTime()) {
+			// 	setFormChanged(4)
+			// 	return
+			// }
+
 			// console.log('projectInfo: ', projectInfo)
 			// const updateProject = await dbUpdateProjectInfo(projectInfo, user_id)
 			setFormChanged(3)
@@ -430,7 +433,7 @@ const Order = ({proj_id, user_id}: any) => {
 	};
 
 	const handleKoefChange = (id: number, pos_id: number, koef_code: string, is_balancer: boolean, value: any) => {
-		console.log('handleKoefChange', id, pos_id, koef_code, is_balancer, value)
+		// console.log('handleKoefChange', id, pos_id, koef_code, is_balancer, value)
 		let updatedKoefs: any[] = [];
 
 		let newValue = value
@@ -441,7 +444,7 @@ const Order = ({proj_id, user_id}: any) => {
 		setDocKoefs((koefs: any[]) => {
 			updatedKoefs = koefs.map((koef: any) => {
 				if (koef.id === id) {
-					return { ...koef, value: value };
+					return { ...koef, value: newValue };
 				}
 				return koef;
 			});
@@ -520,7 +523,7 @@ const Order = ({proj_id, user_id}: any) => {
 		if (value !== '') {
 			value = parseFloat(value)
 		} else {
-			value = 0
+			// value = 0
 		}
 		let updatedKoefs: any[] = [];
 		setDocKoefs((koefs: any[]) => {
@@ -783,7 +786,7 @@ const Order = ({proj_id, user_id}: any) => {
 							<button onClick={saveProject} className='text-white px-3 py-2 text-sm border border-transparent font-semibold bg-blue-600 rounded-lg disabled:opacity-40' disabled={!formChanged}>Сохранить</button>
 							{formChanged === 2 && <div className='my-auto text-sm'>⚠️</div>}
 							{formChanged === 3 && <div className='my-auto text-sm'>⏱️</div>}
-							{formChanged === 4 && <div className='my-auto text-xs'>⚠️ Проект был изменен. Обновите страницу. </div>}
+							{/* {formChanged === 4 && <div className='my-auto text-xs'>⚠️ Проект был изменен. Обновите страницу. </div>} */}
 						</div>
 					</div>
 					<div id='project-info' className={`border border-b-0 flex flex-col px-6 pt-6 pb-8 text-sm gap-4 transition-all duration-500 ease-in-out ${isProjectInfoOpen ? 'hidden' : ''}`}>
