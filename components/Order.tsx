@@ -264,12 +264,12 @@ const Order = ({proj_id, user_id}: any) => {
 						const pos2 = positions.find((pos: any) => pos.fixed_id === '6_2')
 						// console.log('7_2 pos.finalKoef: ', pos.finalKoef)
 						// console.log('valueNoKoef: ', value)
-						return { ...pos, valueNoKoef: (value + pos2.value), value: Math.round((value + pos2.value) * pos.finalKoef * 1.68 * 100) / 100 }
+						return { ...pos, valueNoKoef: (value + pos2.value), value: Math.ceil((value + pos2.value) * pos.finalKoef * 1.68) }
 					}
 					if ((fixed_id === '6_2') && ['7_2'].includes(pos.fixed_id) ) {
 						const pos2 = positions.find((pos: any) => pos.fixed_id === '6_1')
 						// console.log('6_3[d] pos.finalKoef: ', pos.finalKoef)
-						return { ...pos, valueNoKoef: (value + pos2.value), value: Math.round((value + pos2.value) * pos.finalKoef * 1.68 * 100) / 100 }
+						return { ...pos, valueNoKoef: (value + pos2.value), value: Math.ceil((value + pos2.value) * pos.finalKoef * 1.68) }
 					}
 					// if ((fixed_id === '7_1') && ['7_2'].includes(pos.fixed_id) ) {
 					// 	// const pos2 = positions.find((pos: any) => pos.fixed_id === '6_2')
@@ -501,7 +501,7 @@ const Order = ({proj_id, user_id}: any) => {
 							// console.log('pos.valueNoKoef', pos.valueNoKoef)
 							// console.log('finalKoef', newKoef)
 							// find position
-							return { ...pos, value: Math.round(pos.valueNoKoef * newKoef * 1.68 * 100) / 100, finalKoef: newKoef }
+							return { ...pos, value: Math.ceil(pos.valueNoKoef * newKoef * 1.68), finalKoef: newKoef }
 						} 
 						// console.log('CASE-4')
 						return { ...pos, value: Math.ceil(pos.valueNoKoef * newKoef), finalKoef: newKoef }
